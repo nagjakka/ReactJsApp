@@ -1,0 +1,55 @@
+import React from 'react';
+import { useState,useEffect } from 'react';
+
+
+function Home() {
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [items, setItems] = useState([]);
+
+  // Note: the empty deps array [] means
+  // this useEffect will run once
+  // similar to componentDidMount()
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setIsLoaded(true);
+          setItems(result.reverse());
+		  console.log(result.reverse());
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      )
+  }, [])
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  } else if (!isLoaded) {
+    return <div>Loading...</div>;
+  } else {
+	  
+    return (
+      <ul>
+        {items.map(item => (
+          <li key={item.title}>
+		  <div class="div">
+		  UserId:{item.id} <br />
+           Title: {item.title} <br />
+		   Body: {item.body}
+</div>		   
+          </li>
+        ))}
+      </ul>
+    );
+  }
+}
+
+
+export default Home;
